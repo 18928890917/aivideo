@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.stylehub.aivideo">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:name=".AiSwapApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AiSwap"
+        tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
+        <activity
+            android:name=".ui.home.WelcomeActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AiSwap">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.home.HomeActivity"/>
+        <activity android:name="com.stylehub.aivideo.ui.mine.MineActivity" />
+        <activity android:name="com.stylehub.aivideo.ui.settings.SettingsActivity" />
+        <activity android:name="com.stylehub.aivideo.ui.purchase.PurchaseActivity" />
+        <activity android:name=".ui.history.HistoryActivity"/>
+        <activity android:name=".ui.template.FacePhotoSwapActivity" />
+        <activity android:name=".ui.template.ClayStylePhotoSwapActivity" />
+        <activity android:name=".ui.template.DancePhotoSwapActivity" />
+        <activity android:name=".utils.GalleryProxyActivity" />
+        <activity android:name=".ui.template.ClothesSwapActivity" />
+        <activity android:name=".ui.template.ImageFaceSwapActivity" />
+        <activity android:name=".ui.template.VideoFaceSwapActivity" />
+        <activity android:name=".ui.common.WebViewActivity" />
+        <activity android:name=".ui.template.CommonSwapActivity" />
+    </application>
+
+</manifest>
