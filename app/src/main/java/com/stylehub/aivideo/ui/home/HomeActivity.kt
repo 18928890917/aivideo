@@ -43,8 +43,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.gson.Gson
 import com.stylehub.aivideo.R
 import com.stylehub.aivideo.base.BaseActivity
+import com.stylehub.aivideo.network.model.out.UserConfigDataModel
 import com.stylehub.aivideo.ui.home.dance.ClothesSwapTab
 import com.stylehub.aivideo.ui.home.hot.HotTab
 import com.stylehub.aivideo.ui.home.swap.SwapTab
@@ -68,39 +70,69 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
 //        clothData.title = "Clothes Swap"
 //        clothData.description = "Upload photos to start making"
 //        clothData.imgUrl = "https://cdn.fancytool.org/cdn/c/jv1951965964090875904.png"
-//        clothData.templateUrl = "https://cdn.fancytool.org/cdn/c/jv1951965964090875904.png"
-//        clothData.taskType = "ClothesSwapTask"
-//        clothData.templateName = "31993898713954"
+//        clothData.genType = 3
 //        hotDataList.add(clothData)
+//
+//        val clothData1 = UserConfigDataModel()
+//        clothData1.title = "Clothes Swap with template"
+//        clothData1.description = "Upload photos to start making"
+//        clothData1.imgUrl = "https://cdn.fancytool.org/cdn/c/jv1951965964090875904.png"
+//        clothData1.genType = 3
+//        clothData1.template = hashMapOf(
+//            Pair("templateUrl", "https://cdn.fancytool.org/cdn/c/jv1951965964090875904.png"),
+//            Pair("templateName", "31993898713954")
+//        )
+//        hotDataList.add(clothData1)
 //
 //        val faceSwapData = UserConfigDataModel()
 //        faceSwapData.title = "Face Swap"
 //        faceSwapData.description = "Upload photos to start making"
 //        faceSwapData.imgUrl = "https://cdn.fancytool.org/cdn/template_image/20250412/ai_admin_1744455312282.png"
-//        faceSwapData.templateUrl = "https://cdn.fancytool.org/cdn/template_image/20250412/ai_admin_1744455312282.png"
-//        faceSwapData.templateName = "18011180321025"
-//        faceSwapData.headPos = "391,128,571,357"
 //        faceSwapData.genType = 1
 //        hotDataList.add(faceSwapData)
+//
+//        val faceSwapData1 = UserConfigDataModel()
+//        faceSwapData1.title = "Face Swap with template"
+//        faceSwapData1.description = "Upload photos to start making"
+//        faceSwapData1.imgUrl = "https://cdn.fancytool.org/cdn/template_image/20250412/ai_admin_1744455312282.png"
+//        faceSwapData1.genType = 1
+//        faceSwapData1.template = hashMapOf(
+//            Pair("templateUrl", "https://cdn.fancytool.org/cdn/template_image/20250412/ai_admin_1744455312282.png"),
+//            Pair("templateName", "18011180321025"),
+//            Pair("headPos", "391,128,571,357"),
+//
+//        )
+//        hotDataList.add(faceSwapData1)
 //
 //        val videoFaceSwapData = UserConfigDataModel()
 //        videoFaceSwapData.title = "Video Face Swap"
 //        videoFaceSwapData.description = "Upload photos to start making"
 //        videoFaceSwapData.imgUrl = "https://cdn.fancytool.org/cdn/f/20250805/jv1754372568551.jpeg"
-//        videoFaceSwapData.templateUrl = "https://cdn.fancytool.org/cdn/f/20250805/jv1754372563017.mp4"
-//        videoFaceSwapData.templateFaceUrl = "https://cdn.fancytool.org/hormony/template_video/20250805/jv1754372563017.jpg"
-//        videoFaceSwapData.templateName = "38321761463618"
 //        videoFaceSwapData.genType = 2
-//        videoFaceSwapData.credits1 = 5
 //        hotDataList.add(videoFaceSwapData)
+//
+//        val videoFaceSwapData1 = UserConfigDataModel()
+//        videoFaceSwapData1.title = "Video Face Swap with template"
+//        videoFaceSwapData1.description = "Upload photos to start making"
+//        videoFaceSwapData1.imgUrl = "https://cdn.fancytool.org/cdn/f/20250805/jv1754372568551.jpeg"
+//        videoFaceSwapData1.genType = 2
+//        videoFaceSwapData1.template = hashMapOf(
+//            Pair("templateUrl", "https://cdn.fancytool.org/cdn/f/20250805/jv1754372563017.mp4"),
+//            Pair("templateName", "38321761463618"),
+//            Pair("templateFaceUrl", "https://cdn.fancytool.org/hormony/template_video/20250805/jv1754372563017.jpg"),
+//            Pair("credits", 5),
+//
+//            )
+//        hotDataList.add(videoFaceSwapData1)
 //
 //        val clayStyleSwapData = UserConfigDataModel()
 //        clayStyleSwapData.title = "Clay Style"
 //        clayStyleSwapData.description = "Upload photos to start making"
-//        clayStyleSwapData.taskType = "ClayStylizationTask"
+//        clayStyleSwapData.genType = 4
 //        hotDataList.add(clayStyleSwapData)
 //
-//        print(Gson().newBuilder()
+//        print(
+//            Gson().newBuilder()
 //            .setPrettyPrinting()
 //            .create()
 //            .toJson(hotDataList))

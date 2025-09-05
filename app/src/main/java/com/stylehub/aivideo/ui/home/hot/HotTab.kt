@@ -41,9 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.stylehub.aivideo.R
+import com.stylehub.aivideo.network.model.out.ClothesTemplateRespDataModel
+import com.stylehub.aivideo.network.model.out.CreateImageTaskTemplateModel
+import com.stylehub.aivideo.network.model.out.FaceSwapVideoTemplateRespDataModel
+import com.stylehub.aivideo.network.model.out.GetImageTemplateRespDataModel
 import com.stylehub.aivideo.network.model.out.UserConfigDataModel
 import com.stylehub.aivideo.ui.common.CommonEmptyView
 import com.stylehub.aivideo.ui.home.HomeActivity
+import com.stylehub.aivideo.ui.home.SwapTabsEnum
 import com.stylehub.aivideo.utils.AppRouterManager
 import kotlinx.coroutines.launch
 
@@ -112,15 +117,32 @@ fun HotTab(
 
                                 1 -> {
                                     //图片换脸
-                                    AppRouterManager.enterImageFaceSwapActivity(template = item.convertToGetImageTemplateRespDataModel())
+                                    val template : GetImageTemplateRespDataModel? = item.getTemplateModel()
+                                    if (template != null) {
+                                        AppRouterManager.enterImageFaceSwapActivity(template = template)
+                                    } else {
+                                        onTabRequest("swap")
+                                        viewModel.switchTab(SwapTabsEnum.PHOTO)
+                                    }
                                 }
                                 2 -> {
                                     //视频换脸
-                                    AppRouterManager.enterVideoFaceSwapActivity(template = item.convertToFaceSwapVideoTemplateRespDataModel())
+                                    val template : FaceSwapVideoTemplateRespDataModel? = item.getTemplateModel()
+                                    if (template != null) {
+                                        AppRouterManager.enterVideoFaceSwapActivity(template = template)
+                                    } else {
+                                        onTabRequest("swap")
+                                        viewModel.switchTab(SwapTabsEnum.VIDEO)
+                                    }
                                 }
                                 3 -> {
                                     //换衣
-                                    AppRouterManager.enterClothesSwapActivity(template = item.convertToClothesTemplateRespDataModel())
+                                    val template : ClothesTemplateRespDataModel? = item.getTemplateModel()
+                                    if (template != null) {
+                                        AppRouterManager.enterClothesSwapActivity(template = template)
+                                    } else {
+                                        onTabRequest("clothes swap")
+                                    }
                                 }
                                 4 -> {
                                     //黏土风格
@@ -128,7 +150,10 @@ fun HotTab(
                                 }
                                 else -> {
                                     //通用生图任务
-                                    AppRouterManager.enterCommonSwapActivity(template = item)
+                                    val template : CreateImageTaskTemplateModel? = item.getTemplateModel()
+                                    if (template != null) {
+                                        AppRouterManager.enterCommonSwapActivity(template = template)
+                                    }
                                 }
 
                             }

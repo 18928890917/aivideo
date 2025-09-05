@@ -12,9 +12,9 @@ import com.stylehub.aivideo.network.ProgressCommonReqModel
 import com.stylehub.aivideo.network.model.`in`.CreateImageTaskReqDataModel
 import com.stylehub.aivideo.network.model.out.CommonRespModel
 import com.stylehub.aivideo.network.model.out.CreateImageTaskRespDataModel
+import com.stylehub.aivideo.network.model.out.CreateImageTaskTemplateModel
 import com.stylehub.aivideo.network.model.out.RecommendHeadListRespDataModel
 import com.stylehub.aivideo.network.model.out.Template
-import com.stylehub.aivideo.network.model.out.UserConfigDataModel
 import com.stylehub.aivideo.utils.ImageUtil
 import com.stylehub.aivideo.utils.LoginManager
 import kotlinx.coroutines.launch
@@ -36,7 +36,7 @@ class CommonSwapActivityViewModel(
     initialValue: CommonPhotoSwapActivityUiData = CommonPhotoSwapActivityUiData()
 ) : BaseSwapActivityViewModel<CommonPhotoSwapActivityUiData>(initialValue) {
 
-    private var mUserConfigData: UserConfigDataModel? = null
+    private var imageTaskTemplate: CreateImageTaskTemplateModel? = null
     private var src1ImgUri: Uri? = null
     /**
      * 黏土风格任务请求模型
@@ -50,10 +50,10 @@ class CommonSwapActivityViewModel(
 
     override fun setIntentData(data: Template?) {
         super.setIntentData(data)
-        mUserConfigData = mTemplate as UserConfigDataModel?
+        imageTaskTemplate = mTemplate as CreateImageTaskTemplateModel?
 
-        mUserConfigData?.run {
-            mutableData.title = title
+        imageTaskTemplate?.run {
+            mutableData.title = title?: taskType
             mutableData.subTitle = "Template"
             if (getPreviewUrl().isEmpty()) {
                 mutableData.largeImageUrl = Uri.Builder()
@@ -152,12 +152,12 @@ class CommonSwapActivityViewModel(
                 src1ImgUri = uri
                 createImgTaskReqModel.srcImg1 = srcImageBase64
 
-                if (mUserConfigData?.srcImg2Support == true) {
+                if (imageTaskTemplate?.srcImg2Support == true) {
                     mutableData.subTitle = "photo1(select another photo or skip)"
                     showBottomBarWithUploadPhotoButton(true)
                 } else {
                     mutableData.subTitle = "photo"
-                    if (mUserConfigData?.size2 != null) {
+                    if (imageTaskTemplate?.size2 != null) {
                         showBottomBarWithResolution()
                     } else {
                         showBottomBarWithStartMakingButton()
@@ -166,7 +166,7 @@ class CommonSwapActivityViewModel(
             } else {
                 mutableData.subTitle = "photo2"
                 createImgTaskReqModel.srcImg2 = srcImageBase64
-                if (mUserConfigData?.size2 != null) {
+                if (imageTaskTemplate?.size2 != null) {
                     showBottomBarWithResolution()
                 } else {
                     showBottomBarWithStartMakingButton()
@@ -179,7 +179,7 @@ class CommonSwapActivityViewModel(
     override fun onSkipClick() {
 
         mutableData.subTitle = "photo"
-        if (mUserConfigData?.size2 != null) {
+        if (imageTaskTemplate?.size2 != null) {
             showBottomBarWithResolution()
         } else {
             showBottomBarWithStartMakingButton()

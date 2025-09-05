@@ -6,22 +6,22 @@ import com.stylehub.aivideo.AiSwapApplication
 import com.stylehub.aivideo.base.BaseActivity
 import com.stylehub.aivideo.base.BaseViewModel
 import com.stylehub.aivideo.network.model.out.ClothesTemplateRespDataModel
+import com.stylehub.aivideo.network.model.out.CreateImageTaskTemplateModel
 import com.stylehub.aivideo.network.model.out.FaceSwapVideoTemplateRespDataModel
 import com.stylehub.aivideo.network.model.out.GetImageTemplateRespDataModel
 import com.stylehub.aivideo.network.model.out.GetImg2VideoPoseTemplateRespDataModel
 import com.stylehub.aivideo.network.model.out.Template
-import com.stylehub.aivideo.network.model.out.UserConfigDataModel
+import com.stylehub.aivideo.ui.common.WebViewActivity
 import com.stylehub.aivideo.ui.mine.MineActivity
 import com.stylehub.aivideo.ui.purchase.PurchaseActivity
 import com.stylehub.aivideo.ui.settings.SettingsActivity
 import com.stylehub.aivideo.ui.template.ClayStylePhotoSwapActivity
 import com.stylehub.aivideo.ui.template.ClothesSwapActivity
+import com.stylehub.aivideo.ui.template.CommonSwapActivity
 import com.stylehub.aivideo.ui.template.DancePhotoSwapActivity
 import com.stylehub.aivideo.ui.template.FacePhotoSwapActivity
 import com.stylehub.aivideo.ui.template.ImageFaceSwapActivity
 import com.stylehub.aivideo.ui.template.VideoFaceSwapActivity
-import com.stylehub.aivideo.ui.common.WebViewActivity
-import com.stylehub.aivideo.ui.template.CommonSwapActivity
 import java.io.Serializable
 
 /**
@@ -156,7 +156,7 @@ object AppRouterManager {
     /**
      * 进入通用换图页面
      */
-    fun enterCommonSwapActivity(context: Context = getContext(), template: UserConfigDataModel) {
+    fun enterCommonSwapActivity(context: Context = getContext(), template: CreateImageTaskTemplateModel) {
 
         if (!LoginManager.isGoogleLogin()) {
             showLoginDialog()
