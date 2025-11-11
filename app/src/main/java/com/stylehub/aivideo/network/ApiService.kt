@@ -1,6 +1,5 @@
 package com.stylehub.aivideo.network
 
-import okhttp3.RequestBody
 import com.stylehub.aivideo.network.consts.AppConst
 import com.stylehub.aivideo.network.model.`in`.AppEventReqDataModel
 import com.stylehub.aivideo.network.model.`in`.ClayStylizationReqDataModel
@@ -13,6 +12,8 @@ import com.stylehub.aivideo.network.model.`in`.DeleteAccountReqDataModel
 import com.stylehub.aivideo.network.model.`in`.FaceSwapExTaskReqDataModel
 import com.stylehub.aivideo.network.model.`in`.FaceSwapTaskReqDataModel
 import com.stylehub.aivideo.network.model.`in`.FastLoginReqDataModel
+import com.stylehub.aivideo.network.model.`in`.FeedbackReadReqDataModel
+import com.stylehub.aivideo.network.model.`in`.FeedbackSubmitReqDataModel
 import com.stylehub.aivideo.network.model.`in`.GetImageFacesReqDataModel
 import com.stylehub.aivideo.network.model.`in`.GetPaymentDetailListReqDataModel
 import com.stylehub.aivideo.network.model.`in`.GetVideoFacesReqDataModel
@@ -35,7 +36,7 @@ import com.stylehub.aivideo.network.model.out.CustomClothesSwapRespDataModel
 import com.stylehub.aivideo.network.model.out.FaceSwapExTaskRespDataModel
 import com.stylehub.aivideo.network.model.out.FaceSwapTaskRespDataModel
 import com.stylehub.aivideo.network.model.out.FaceSwapVideoTemplateRespDataModel
-import com.stylehub.aivideo.network.model.out.LoginResp
+import com.stylehub.aivideo.network.model.out.FeedbackListRespDataModel
 import com.stylehub.aivideo.network.model.out.GetGooglePayActivitiesRespDataModel
 import com.stylehub.aivideo.network.model.out.GetImageFacesRespDataModel
 import com.stylehub.aivideo.network.model.out.GetImageProgressRespDataModel
@@ -46,6 +47,7 @@ import com.stylehub.aivideo.network.model.out.GetVideoFacesRespDataModel
 import com.stylehub.aivideo.network.model.out.GooglePayCallbackRespDataModel
 import com.stylehub.aivideo.network.model.out.ImagePromptRecommendRespDataModel
 import com.stylehub.aivideo.network.model.out.Img2VideoPoseTaskRespDataModel
+import com.stylehub.aivideo.network.model.out.LoginResp
 import com.stylehub.aivideo.network.model.out.MyCreationRespDataModel
 import com.stylehub.aivideo.network.model.out.MyTasksRespDataModel
 import com.stylehub.aivideo.network.model.out.OfftopVideoRespDataModel
@@ -56,6 +58,7 @@ import com.stylehub.aivideo.network.model.out.Txt2ImgTagsRespDataModel
 import com.stylehub.aivideo.network.model.out.UserCommonInfoRespDataModel
 import com.stylehub.aivideo.network.model.out.UserPaymentsRespDataModel
 import com.stylehub.aivideo.network.model.out.VideoFaceSwapTaskRespDataModel
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -123,7 +126,7 @@ interface ApiService {
         @Query("userId") userId: String,
 //        @Query("categoryId") categoryId: Int = 1,
         @Query("app") app: String = AppConst.app,
-    ): Call<CommonRespModel<List<ClothesTemplateRespDataModel>>>
+    ): Call<CommonRespModel<MutableList<ClothesTemplateRespDataModel>>>
 
     /**
      * 创建支付订单
@@ -326,7 +329,7 @@ interface ApiService {
     @GET("/v1/image/my-tasks")
     fun myTasks(
         @Query("page") page: Int,
-        @Query("taskType") taskType: String? = "2",
+        @Query("taskTypes") taskType: String? = "2",
         @Query("size") size: Int = 20,
         @Query("app") app: String = AppConst.app,
     ): Call<CommonRespModel<MyTasksRespDataModel>>
@@ -528,4 +531,35 @@ interface ApiService {
         @Query("pkg") pkg: String = AppConst.packageName,
         @Query("app") app: String = AppConst.app,
     ): Call<CommonRespModel<VideoFaceSwapTaskRespDataModel>>
+
+    /**
+     * 用户反馈列表
+     *
+     * "replyStatus" :回复状态，0=未回复，1=已回复，不传则查全部
+     *
+     */
+    @GET("/v1/feedback/list")
+    fun getFeedbackList(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = 20,
+        @Query("replyStatus") replyStatus: Int? = null
+    ): Call<CommonRespModel<FeedbackListRespDataModel>>
+
+    /**
+     * 提交反馈
+     *
+     */
+    @POST("/v1/feedback/submit")
+    fun feedbackSubmit(
+        @Body body: CommonReqModel<FeedbackSubmitReqDataModel>,
+    ): Call<CommonRespModel<Boolean>>
+
+    /**
+     * 用户已读反馈
+     *
+     */
+    @POST("/v1/feedback/read")
+    fun feedbackRead(
+        @Body body: CommonReqModel<FeedbackReadReqDataModel>,
+    ): Call<CommonRespModel<Boolean>>
 }

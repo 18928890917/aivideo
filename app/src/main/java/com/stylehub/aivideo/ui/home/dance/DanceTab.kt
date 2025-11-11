@@ -1,7 +1,6 @@
 package com.stylehub.aivideo.ui.home.dance
 
 import android.annotation.SuppressLint
-import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,21 +34,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import coil.ImageLoader
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.load
-import kotlinx.coroutines.launch
 import com.stylehub.aivideo.R
 import com.stylehub.aivideo.ui.common.CommonEmptyView
+import com.stylehub.aivideo.ui.common.PowerAsyncImage
 import com.stylehub.aivideo.ui.home.HomeActivity
 import com.stylehub.aivideo.utils.AppRouterManager
-import com.stylehub.aivideo.utils.LoginManager
+import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -123,8 +116,8 @@ fun DanceTab(innerPadding: PaddingValues, homeActivity: HomeActivity) {
                             ) {
                                 Box(Modifier.fillMaxSize()) {
                                     // 显示模板图片
-                                    GifSupportingImage(
-                                        imageUrl = template.animate ?: "",
+                                    PowerAsyncImage(
+                                        model = template.animate ?: "",
                                         contentDescription = template.getTmpName(),
                                         modifier = Modifier.fillMaxSize(),
                                         contentScale = ContentScale.Crop
@@ -205,53 +198,6 @@ fun DanceTab(innerPadding: PaddingValues, homeActivity: HomeActivity) {
             }
         }
     }
-}
-
-@Composable
-fun GifSupportingImage(
-    imageUrl: String,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Fit
-) {
-    val context = LocalContext.current
-
-    // 创建支持GIF的ImageLoader，使用remember避免重复创建
-    val imageLoader = remember {
-        ImageLoader.Builder(context)
-            .components {
-                add(GifDecoder.Factory())
-                add(ImageDecoderDecoder.Factory())
-            }
-            .build()
-    }
-
-    AndroidView(
-        factory = { ctx ->
-            ImageView(ctx).apply {
-                scaleType = when (contentScale) {
-                    ContentScale.Crop -> ImageView.ScaleType.CENTER_CROP
-                    ContentScale.Fit -> ImageView.ScaleType.FIT_CENTER
-                    ContentScale.FillBounds -> ImageView.ScaleType.FIT_XY
-                    ContentScale.FillHeight -> ImageView.ScaleType.FIT_XY
-                    ContentScale.FillWidth -> ImageView.ScaleType.FIT_XY
-                    ContentScale.Inside -> ImageView.ScaleType.FIT_CENTER
-                    ContentScale.None -> ImageView.ScaleType.CENTER
-                    else -> ImageView.ScaleType.FIT_CENTER
-                }
-            }
-        },
-        modifier = modifier,
-        update = { imageView ->
-            if (imageUrl.isNotEmpty()) {
-                imageView.load(imageUrl, imageLoader) {
-                    crossfade(true)
-                }
-            } else {
-                imageView.setImageResource(R.drawable.ic_profile_default)
-            }
-        }
-    )
 }
 
 //@Preview(showBackground = true)

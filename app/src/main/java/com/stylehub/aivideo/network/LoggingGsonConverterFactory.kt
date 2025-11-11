@@ -10,10 +10,9 @@ import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 import java.lang.reflect.Type
 
-class LoggingGsonConverterFactory private constructor(private val gson: Gson) : Converter.Factory() {
+class LoggingGsonConverterFactory private constructor(gson: Gson) : Converter.Factory() {
     private val delegateFactory = GsonConverterFactory.create(gson)
 
     companion object {
@@ -25,7 +24,7 @@ class LoggingGsonConverterFactory private constructor(private val gson: Gson) : 
         type: Type,
         annotations: Array<Annotation>,
         retrofit: Retrofit
-    ): Converter<ResponseBody, *>? {
+    ): Converter<ResponseBody, *> {
         val delegate = delegateFactory.responseBodyConverter(type, annotations, retrofit)
         return Converter<ResponseBody, Any> { body ->
             val result = delegate?.convert(body)

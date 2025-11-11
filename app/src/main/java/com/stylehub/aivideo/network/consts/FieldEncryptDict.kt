@@ -28,6 +28,7 @@ object FieldEncryptDict {
         "businessType" to "fghbyzauwxysmnoirstnijkewxyswxysXYZTcdeytuvpijke",
         "taskId" to "xyztefgawxysopqkMNOIhijd",
         "categoryId" to "ghicefgaxyztijkeklmgstuovwxrcdeyMNOIhijd",
-        "code" to "ghicstuohijdijke"
+        "code" to "ghicstuohijdijke",
+        "replyStatus" to "vwxrijketuvppqrlcdeyWXYSxyztefgaxyztyzauwxys"
     )
 } 

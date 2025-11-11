@@ -45,7 +45,10 @@ object UrlEncryptDict {
         "/v1/user/payments" to "/fsdgesdga/ZOosuuxZLKRfUeIuvXkhaMgXVhqu2O28",
         "/v1/user/delete" to "/fsdgesdga/ZOosuuxZLKTNQsoM56KIGw==",
         "/v1/image/video_facewap_task" to "/fsdgesdga/DuRsYKB5J4GDi1ueBNb7goX2EHMPMFxChnJqh7czAxo=",
-        "/v1/user/account" to "/fsdgesdga/ZOosuuxZLKSaUNnyEQLOzKSzvB79pe7S"
+        "/v1/user/account" to "/fsdgesdga/ZOosuuxZLKSaUNnyEQLOzKSzvB79pe7S",
+        "/v1/feedback/list" to "/fsdgesdga/NC+f8CL4QntEopZhrnovj1GJ5BZHtjzx",
+        "/v1/feedback/submit" to "/fsdgesdga/NC+f8CL4QnsqAkmxcuEv0zBn1ozHEQ8w",
+        "/v1/feedback/read" to "/fsdgesdga/NC+f8CL4QnvA84Nb4jD1+TtDofgNSm7D",
     )
 
 }

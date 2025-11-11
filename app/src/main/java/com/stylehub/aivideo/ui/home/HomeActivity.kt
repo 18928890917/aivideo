@@ -43,6 +43,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.facebook.appevents.AppEventsLogger
 import com.google.gson.Gson
 import com.stylehub.aivideo.R
 import com.stylehub.aivideo.base.BaseActivity
@@ -66,11 +67,33 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
 
 //        val hotDataList = mutableListOf<UserConfigDataModel>()
 //
+//        val commonData = UserConfigDataModel()
+//        commonData.title = "Common Video"
+//        commonData.description = "Upload photos to start making"
+//        commonData.imgUrl = "https://cdn.fancytool.org/cdn/f/20250805/jv1754372568551.jpeg"
+//        commonData.genType = 0
+//        commonData.tag = "hihi"
+//        commonData.template = hashMapOf(
+//
+//            Pair("title", "i am title"),
+//            Pair("taskType", "Img2VideoByPoseTask"),
+//            Pair("templatePreviewUrl", "https://cdn.fancytool.org/cdn/f/20250805/jv1754372563017.mp4"),
+//            Pair("isVideoPreview", true),
+//            Pair("templateName", "38321761463618"),
+//            Pair("isFpsSize", true),
+//            Pair("size1", "15"),
+//            Pair("size2", "25"),
+//            Pair("credits1", 5),
+//            Pair("credits2", 9),
+//        )
+//        hotDataList.add(commonData)
+//
 //        val clothData = UserConfigDataModel()
 //        clothData.title = "Clothes Swap"
 //        clothData.description = "Upload photos to start making"
 //        clothData.imgUrl = "https://cdn.fancytool.org/cdn/c/jv1951965964090875904.png"
 //        clothData.genType = 3
+//        clothData.tag = "cloth"
 //        hotDataList.add(clothData)
 //
 //        val clothData1 = UserConfigDataModel()
@@ -78,6 +101,7 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
 //        clothData1.description = "Upload photos to start making"
 //        clothData1.imgUrl = "https://cdn.fancytool.org/cdn/c/jv1951965964090875904.png"
 //        clothData1.genType = 3
+//        clothData1.tag = "cloth"
 //        clothData1.template = hashMapOf(
 //            Pair("templateUrl", "https://cdn.fancytool.org/cdn/c/jv1951965964090875904.png"),
 //            Pair("templateName", "31993898713954")
@@ -89,6 +113,7 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
 //        faceSwapData.description = "Upload photos to start making"
 //        faceSwapData.imgUrl = "https://cdn.fancytool.org/cdn/template_image/20250412/ai_admin_1744455312282.png"
 //        faceSwapData.genType = 1
+//        faceSwapData.tag = "face"
 //        hotDataList.add(faceSwapData)
 //
 //        val faceSwapData1 = UserConfigDataModel()
@@ -96,6 +121,7 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
 //        faceSwapData1.description = "Upload photos to start making"
 //        faceSwapData1.imgUrl = "https://cdn.fancytool.org/cdn/template_image/20250412/ai_admin_1744455312282.png"
 //        faceSwapData1.genType = 1
+//        faceSwapData1.tag = "face"
 //        faceSwapData1.template = hashMapOf(
 //            Pair("templateUrl", "https://cdn.fancytool.org/cdn/template_image/20250412/ai_admin_1744455312282.png"),
 //            Pair("templateName", "18011180321025"),
@@ -109,6 +135,7 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
 //        videoFaceSwapData.description = "Upload photos to start making"
 //        videoFaceSwapData.imgUrl = "https://cdn.fancytool.org/cdn/f/20250805/jv1754372568551.jpeg"
 //        videoFaceSwapData.genType = 2
+//        videoFaceSwapData.tag = "video"
 //        hotDataList.add(videoFaceSwapData)
 //
 //        val videoFaceSwapData1 = UserConfigDataModel()
@@ -116,6 +143,7 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
 //        videoFaceSwapData1.description = "Upload photos to start making"
 //        videoFaceSwapData1.imgUrl = "https://cdn.fancytool.org/cdn/f/20250805/jv1754372568551.jpeg"
 //        videoFaceSwapData1.genType = 2
+//        videoFaceSwapData1.tag = "video"
 //        videoFaceSwapData1.template = hashMapOf(
 //            Pair("templateUrl", "https://cdn.fancytool.org/cdn/f/20250805/jv1754372563017.mp4"),
 //            Pair("templateName", "38321761463618"),
@@ -129,6 +157,7 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
 //        clayStyleSwapData.title = "Clay Style"
 //        clayStyleSwapData.description = "Upload photos to start making"
 //        clayStyleSwapData.genType = 4
+//        clayStyleSwapData.tag = "other"
 //        hotDataList.add(clayStyleSwapData)
 //
 //        print(
@@ -144,6 +173,11 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
     override fun onBackPressed() {
         super.onBackPressed()
         moveTaskToBack(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppEventsLogger.activateApp(application)
     }
 }
 

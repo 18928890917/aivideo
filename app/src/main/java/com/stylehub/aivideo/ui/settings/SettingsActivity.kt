@@ -149,6 +149,13 @@ fun SettingsScreen(
                 value = uiStateData.contactUrl,
                 onClick = {}
             )
+
+            Spacer(Modifier.height(20.dp))
+
+            SettingsItem(
+                title = "Feedback",
+                onClick = {AppRouterManager.enterFeedbackActivity()}
+            )
         }
 
         Spacer(Modifier.weight(1f))

@@ -54,7 +54,10 @@ class MineActivityViewModel(initialValue: MineActivityUiData = MineActivityUiDat
 
     private val mutableData = _uiStateData.value
     private val SwappedTaskType = "${MyTaskTypeEnum.ImageFaceSwap.code},${MyTaskTypeEnum.ClothesSwap.code},${MyTaskTypeEnum.VideoFaceSwap.code}"
-    private val OtherTaskType = "${MyTaskTypeEnum.ClayStyle.code},${MyTaskTypeEnum.DanceVideo.code},${MyTaskTypeEnum.AdvanceFaceSwap.code}"
+    private val OtherTaskType = "${MyTaskTypeEnum.ClayStyle.code},${MyTaskTypeEnum.DanceVideo.code},${MyTaskTypeEnum.AdvanceFaceSwap.code}," +
+            "${MyTaskTypeEnum.FpDance.code},${MyTaskTypeEnum.CombinePicTask.code},${MyTaskTypeEnum.I2VCustomTask.code}," +
+            "${MyTaskTypeEnum.DollGenTask.code},${MyTaskTypeEnum.CartoonStyleTask.code},${MyTaskTypeEnum.ClayAndCartoonStyleTask.code}"
+//    private val OtherTaskType = ""
 
     private var swappedTaskPage = 1;
     private var otherTaskPage = 1;

@@ -12,7 +12,7 @@ android {
         applicationId = "com.stylehub.aivideo"
         minSdk = 24
         targetSdk = 35
-        versionCode = 3
+        versionCode = 6
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -71,18 +71,18 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.xxpermissions)
-    implementation("androidx.compose.material:material-icons-extended:1.6.6")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.34.0")
-    implementation("com.android.installreferrer:installreferrer:2.2")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("io.coil-kt:coil-gif:2.5.0")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.installreferrer)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.squareup.logging.interceptor)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.google.gson)
+    implementation(libs.androidx.lifecycle.lifecycle.runtime.compose3)
     implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -91,11 +91,16 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.android.billingclient:billing-ktx:8.0.0")
+    implementation(libs.android.billing.ktx)
 
-    implementation("androidx.credentials:credentials:1.5.0")
-    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
-    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.facebook.core)
+    implementation("androidx.media3:media3-ui:1.4.1")
+    implementation("androidx.media3:media3-exoplayer:1.4.1")
+    // 如果需要网络播放（如 HTTPS 视频）
+    implementation("androidx.media3:media3-datasource-okhttp:1.4.1") // 可选
 //    implementation("com.google.android.gms:play-services-wallet:19.2.1")
 
 }

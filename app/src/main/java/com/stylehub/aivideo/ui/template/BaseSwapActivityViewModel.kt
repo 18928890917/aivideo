@@ -587,6 +587,11 @@ open class BaseSwapActivityUiData {
      */
     var largeVideoUrl by mutableStateOf<String?>(null)
 
+    /**
+     * 成功视频url
+     */
+    var successVideoUrl by mutableStateOf<String?>(null)
+
 
     //////////////////////////// 上传进度弹窗控制 //////////////////////////////////
 

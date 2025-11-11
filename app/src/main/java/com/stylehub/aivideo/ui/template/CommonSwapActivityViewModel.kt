@@ -54,16 +54,22 @@ class CommonSwapActivityViewModel(
 
         imageTaskTemplate?.run {
             mutableData.title = title?: taskType
-            mutableData.subTitle = "Template"
-            if (getPreviewUrl().isEmpty()) {
-                mutableData.largeImageUrl = Uri.Builder()
-                    .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-                    .authority(mActivity!!.packageName)
-                    .appendPath(R.mipmap.img_clay_style_template.toString())
-                    .build()
-                    .toString()
+            mutableData.subTitle = subTitle
+            mutableData.showCredits = false
+
+            if (isVideoPreview) {
+                mutableData.largeVideoUrl = getPreviewUrl()
             } else {
-                mutableData.largeImageUrl = getPreviewUrl()
+                if (getPreviewUrl().isEmpty()) {
+                    mutableData.largeImageUrl = Uri.Builder()
+                        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                        .authority(mActivity!!.packageName)
+                        .appendPath(R.mipmap.img_clay_style_template.toString())
+                        .build()
+                        .toString()
+                } else {
+                    mutableData.largeImageUrl = getPreviewUrl()
+                }
             }
 
             if (size1 != null) {
@@ -126,6 +132,9 @@ class CommonSwapActivityViewModel(
                 showBottomBarWithDownloadButton()
                 val successBitmap = ImageUtil.getBitmap(successDownloadUrl!!.toUri())
                 mutableData.largeImageBitmap = successBitmap
+                if (successBitmap == null) {
+                    mutableData.successVideoUrl = successDownloadUrl
+                }
                 showMiddlePic()
             }
         } else if (isFail) {

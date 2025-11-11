@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.stylehub.aivideo.constants.MyTaskImgTypeEnum
+import com.stylehub.aivideo.ui.common.ExoVideoPlayer
 import com.stylehub.aivideo.utils.ScreenUtil
 import com.stylehub.aivideo.utils.ScreenUtil.dp2px
 import com.stylehub.aivideo.utils.ScreenUtil.px2dp
@@ -115,13 +116,13 @@ fun PreviewDialog(
                             contentScale = ContentScale.Crop
                         )
                     } else {
-                        VideoPlayer(
+                        ExoVideoPlayer(
                             url = model!!as String,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f)
-                                .padding(horizontal = 27.dp)
-                                .clip(RoundedCornerShape(20.dp)),
+                                .padding(horizontal = 15.dp)
+                                .clip(RoundedCornerShape(15.dp)),
                         )
                     }
 

@@ -21,9 +21,19 @@ class CreateImageTaskTemplateModel : Template, Serializable {
     var title: String? = null
 
     /**
+     * 副标题，在标题栏下方
+     */
+    var subTitle: String? = null
+
+    /**
      * 模板预览图
      */
     var templatePreviewUrl: String = ""
+
+    /**
+     * 是否为视频预览
+     */
+    var isVideoPreview: Boolean = false
 
     /**
      * 模板名称

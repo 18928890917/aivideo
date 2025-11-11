@@ -3,6 +3,7 @@ package com.stylehub.aivideo
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import com.stylehub.aivideo.utils.AppUtil
 import com.stylehub.aivideo.utils.ScreenUtil
@@ -11,6 +12,8 @@ import java.lang.ref.WeakReference
 import kotlin.reflect.KClass
 import coil.Coil
 import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.disk.DiskCache
 
 /**
@@ -65,6 +68,12 @@ class AiSwapApplication: Application() {
                     .directory(cacheDir.resolve("image_cache")) // 自定义缓存目录
                     .maxSizeBytes(512L * 1024 * 1024) // 512MB
                     .build()
+            }
+            .components {
+                add(GifDecoder.Factory())
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    add(ImageDecoderDecoder.Factory())
+                }
             }
             .build()
         Coil.setImageLoader(imageLoader)

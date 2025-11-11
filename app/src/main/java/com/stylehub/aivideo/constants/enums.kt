@@ -32,7 +32,19 @@ enum class MyTaskTypeEnum(val code: Int, val desc: String) {
 
     DanceVideo(8, "跳舞视频"),
 
-    AdvanceFaceSwap(11, "高级换脸")
+    AdvanceFaceSwap(11, "高级换脸"),
+
+    FpDance(13, "舞蹈"),
+
+    CombinePicTask(14, "图片合并"),
+
+    I2VCustomTask(15, "用户自定义"),
+
+    DollGenTask(16, "人物手办图"),
+
+    CartoonStyleTask(17, "卡通风格图"),
+
+    ClayAndCartoonStyleTask(19, "黏土手办任务")
 }
 
 enum class MyTaskImgTypeEnum(val code: Int, val desc: String) {

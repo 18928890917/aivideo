@@ -15,6 +15,7 @@ import com.stylehub.aivideo.ui.common.WebViewActivity
 import com.stylehub.aivideo.ui.mine.MineActivity
 import com.stylehub.aivideo.ui.purchase.PurchaseActivity
 import com.stylehub.aivideo.ui.settings.SettingsActivity
+import com.stylehub.aivideo.ui.settings.feedback.FeedbackActivity
 import com.stylehub.aivideo.ui.template.ClayStylePhotoSwapActivity
 import com.stylehub.aivideo.ui.template.ClothesSwapActivity
 import com.stylehub.aivideo.ui.template.CommonSwapActivity
@@ -185,6 +186,15 @@ object AppRouterManager {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = android.net.Uri.parse(url)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+    /**
+     * 进入反馈页面
+     */
+    fun enterFeedbackActivity(context: Context = getContext()) {
+
+        val intent = Intent(context, FeedbackActivity::class.java)
         context.startActivity(intent)
     }
 }

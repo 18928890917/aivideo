@@ -36,6 +36,11 @@ class UserConfigDataModel: Serializable {
     var imgUrl: String = ""
 
     /**
+     * 标签
+     */
+    var tag: String = ""
+
+    /**
      * 模板信息
      * 注：
      * 当存在生图类型列表的时候，如果不传模板则会跳转到对应的功能模块中

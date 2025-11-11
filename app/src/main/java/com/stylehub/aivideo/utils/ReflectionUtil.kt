@@ -1,5 +1,6 @@
 package com.stylehub.aivideo.utils
 
+import android.util.Log
 import java.lang.reflect.Modifier
 
 /**
@@ -63,16 +64,18 @@ private val simpleTypes = listOf(
     String::class.java,
     Number::class.java,
     Boolean::class.java,
-    Char::class.java
+    Char::class.java,
 )
 
 private fun isSimpleType(value: Any): Boolean {
-    val type = value.javaClass
+    val type = value::class.java
 
-    return when {
+    val result = when {
         type.isPrimitive -> true
         value is Enum<*> -> true
+        value is Boolean -> true
         simpleTypes.any { it.isAssignableFrom(type) } -> true
         else -> false
     }
+    return result
 }

@@ -3,7 +3,6 @@ package com.stylehub.aivideo.ui.home
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -12,22 +11,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
-import coil.ImageLoader
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.load
+import coil.compose.AsyncImage
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.android.installreferrer.api.ReferrerDetails
-import kotlinx.coroutines.delay
+import com.facebook.FacebookSdk
+import com.facebook.LoggingBehavior
+import com.stylehub.aivideo.BuildConfig
 import com.stylehub.aivideo.R
 import com.stylehub.aivideo.base.BaseActivity
 import com.stylehub.aivideo.base.BaseViewModel
@@ -36,6 +32,7 @@ import com.stylehub.aivideo.utils.LoginManager
 import com.stylehub.aivideo.utils.ScreenUtil
 import com.stylehub.aivideo.utils.SharedPreferenceUtil
 import com.stylehub.aivideo.utils.ToastUtil
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -70,6 +67,11 @@ class WelcomeActivity: BaseActivity<WelcomeActivityViewModel, WelcomeActivityUiD
 
             if (used < 4800) {
                 delay(4800 - used)
+            }
+
+            if (BuildConfig.DEBUG) {
+                FacebookSdk.setIsDebugEnabled(true)
+                FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             }
 
             // 跳转到HomeActivity
@@ -131,22 +133,10 @@ class WelcomeActivity: BaseActivity<WelcomeActivityViewModel, WelcomeActivityUiD
                 0 -> {
                     // 根据API版本选择动画资源
                     val animRes = if (Build.VERSION.SDK_INT >= 28) R.drawable.anim_start_page else R.drawable.anim_start_page_low_version
-                    AndroidView(
+                    AsyncImage(
+                        model = animRes,
+                        contentDescription = "",
                         modifier = Modifier.fillMaxSize(),
-                        factory = { ctx ->
-                            ImageView(ctx).apply {
-                                scaleType = ImageView.ScaleType.FIT_XY
-                                val imageLoader = ImageLoader.Builder(ctx)
-                                    .components {
-                                        add(GifDecoder.Factory())
-                                        if (Build.VERSION.SDK_INT >= 28) {
-                                            add(ImageDecoderDecoder.Factory())
-                                        }
-                                    }
-                                    .build()
-                                this.load(animRes, imageLoader)
-                            }
-                        }
                     )
                 }
                 1 -> {

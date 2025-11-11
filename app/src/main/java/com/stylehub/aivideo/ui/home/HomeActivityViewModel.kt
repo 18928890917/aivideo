@@ -1,7 +1,9 @@
 package com.stylehub.aivideo.ui.home
 
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleOwner
@@ -82,7 +84,7 @@ class HomeActivityData {
 
 class HotTabData {
 
-    var configList by mutableStateOf<List<UserConfigDataModel>>(emptyList())
+    var configList: MutableList<UserConfigDataModel> by mutableStateOf(mutableListOf())
 
     /**
      * 当前loading状态
@@ -116,7 +118,7 @@ class SwapTabData {
     /**
      * 换衣模板
      */
-    var clothesTemplates by mutableStateOf<List<ClothesTemplateRespDataModel>>(emptyList())
+    var clothesTemplates: MutableList<ClothesTemplateRespDataModel> by mutableStateOf(mutableListOf())
 
     /**
      * 当前所选的tab
@@ -300,32 +302,35 @@ class HomeActivityViewModel : BaseViewModel<HomeActivityData>(HomeActivityData()
     /**
      * 换衣模版获取
      */
-    fun loadClothesTemplates() {
+    fun loadClothesTemplates(isRefresh: Boolean = false) {
 
         if (!LoginManager.isGuestLogin()) {
             return
         }
 
-        if (swapTabData.isClothesTemplateLoading || swapTabData.clothesTemplates.isNotEmpty()) {
+        if (swapTabData.isClothesTemplateLoading || (!isRefresh && swapTabData.clothesTemplates.isNotEmpty())) {
             return
         }
         swapTabData.isClothesTemplateLoading = true
+        if (isRefresh) {
+            swapTabData.clothesTemplates.clear()
+        }
 
         val userId = LoginManager.getUserId()
 
         val api = Network().createApi(ApiService::class.java)
         api.getClothesTemplates(
             userId = userId!!
-        ).enqueue(object : Callback<CommonRespModel<List<ClothesTemplateRespDataModel>>> {
+        ).enqueue(object : Callback<CommonRespModel<MutableList<ClothesTemplateRespDataModel>>> {
             override fun onResponse(
-                call: Call<CommonRespModel<List<ClothesTemplateRespDataModel>>>,
-                response: Response<CommonRespModel<List<ClothesTemplateRespDataModel>>>
+                call: Call<CommonRespModel<MutableList<ClothesTemplateRespDataModel>>>,
+                response: Response<CommonRespModel<MutableList<ClothesTemplateRespDataModel>>>
             ) {
                 swapTabData.isClothesTemplateLoading = false
 
                 val resp = response.body()
                 if (response.isSuccessful && resp != null && resp.code == 0) {
-                    swapTabData.clothesTemplates = resp.data?.value ?: emptyList()
+                    swapTabData.clothesTemplates = resp.data?.value ?: mutableListOf()
                 } else {
                     //失败逻辑
                     ToastUtil.show(resp?.msg ?: "get clothes template fail")
@@ -333,7 +338,7 @@ class HomeActivityViewModel : BaseViewModel<HomeActivityData>(HomeActivityData()
             }
 
             override fun onFailure(
-                call: Call<CommonRespModel<List<ClothesTemplateRespDataModel>>>,
+                call: Call<CommonRespModel<MutableList<ClothesTemplateRespDataModel>>>,
                 t: Throwable
             ) {
                 swapTabData.isClothesTemplateLoading = false
@@ -400,11 +405,17 @@ class HomeActivityViewModel : BaseViewModel<HomeActivityData>(HomeActivityData()
     }
 
 
-    fun getUserCommonInfo() {
+    fun getUserCommonInfo(isRefresh: Boolean = false) {
         if (LoginManager.getUserId().isNullOrEmpty()) return
 
-        if (hotTabData.isLoading || hotTabData.configList.isNotEmpty()) {
+        if (hotTabData.isLoading) {
             return
+        }
+        if (isRefresh) {
+            hotTabData.configList.clear()
+        } else {
+            if (hotTabData.configList.isNotEmpty())
+                return
         }
         hotTabData.isLoading = true
 

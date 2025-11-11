@@ -18,14 +18,11 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,8 +63,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.stylehub.aivideo.R
 import com.stylehub.aivideo.base.BaseActivity
 import com.stylehub.aivideo.network.model.out.Template
-import com.stylehub.aivideo.ui.common.VideoPlayer
-import com.stylehub.aivideo.ui.dialog.BottomHintMessageDialog
+import com.stylehub.aivideo.ui.common.ExoVideoPlayer
 import com.stylehub.aivideo.ui.dialog.ChooseFaceDialog
 import com.stylehub.aivideo.ui.dialog.CommonProgressDialog
 import com.stylehub.aivideo.ui.dialog.FirstUploadHintDialog
@@ -198,7 +194,7 @@ fun <D : BaseSwapActivityUiData> SwapScreen(
                     text = uiStateData.title,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
@@ -211,7 +207,7 @@ fun <D : BaseSwapActivityUiData> SwapScreen(
                     text = this,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     modifier = Modifier.padding(start = 29.dp, top = 36.dp, bottom = 22.dp)
                 )
             }
@@ -287,19 +283,27 @@ fun <D : BaseSwapActivityUiData> MiddlePicContent(uiStateData: D) {
     if (uiStateData.showMiddlePic) {
 
         if (uiStateData.largeImageBitmap == null) {
-            //大图-通过url设置
-            uiStateData.largeImageUrl?.run {
-                AsyncImage(
-                    modifier = Modifier.fillMaxSize(),
-                    model = this,
-                    contentDescription = "Large image",
-                    contentScale = ContentScale.Crop
-                )
-            }
 
-            //视频-通过视频url设置
-            uiStateData.largeVideoUrl?.run {
-                VideoPlayer(url = this, modifier = Modifier.fillMaxSize())
+            if (uiStateData.successVideoUrl != null) {
+                //视频-通过视频url设置
+                uiStateData.successVideoUrl?.run {
+                    ExoVideoPlayer(url = this, modifier = Modifier.fillMaxSize())
+                }
+            } else {
+                //大图-通过url设置
+                uiStateData.largeImageUrl?.run {
+                    AsyncImage(
+                        modifier = Modifier.fillMaxSize(),
+                        model = this,
+                        contentDescription = "Large image",
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                //视频-通过视频url设置
+                uiStateData.largeVideoUrl?.run {
+                    ExoVideoPlayer(url = this, modifier = Modifier.fillMaxSize())
+                }
             }
         }
 

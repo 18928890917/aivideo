@@ -229,6 +229,9 @@ class VideoFaceSwapActivityViewModel(initialValue: VideoFaceSwapActivityUiData =
                 showBottomBarWithDownloadButton()
                 val successBitmap = ImageUtil.getBitmap(successDownloadUrl!!.toUri())
                 mutableData.largeImageBitmap = successBitmap
+                if (successBitmap == null) {
+                    mutableData.successVideoUrl = successDownloadUrl
+                }
                 showMiddlePic()
             }
         } else if (isFail) {

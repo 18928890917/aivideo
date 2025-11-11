@@ -3,4 +3,6 @@
     <string name="google_web_client_id">342086512961-tvi4mcob9v7p5rjpsu6ruroeg5kanv6n.apps.googleusercontent.com</string>
     <string name="user_policy_url">https://fancytool.org/user</string>
     <string name="privacy_url">https://fancytool.org/privacy</string>
+    <string name="facebook_app_id">1534223937613948</string>
+    <string name="facebook_client_token">064c55994829e90bd6be86318cb22aff</string>
 </resources>

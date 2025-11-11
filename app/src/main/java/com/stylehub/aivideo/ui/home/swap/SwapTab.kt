@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
 import com.stylehub.aivideo.R
 import com.stylehub.aivideo.network.model.out.ClothesTemplateRespDataModel
 import com.stylehub.aivideo.network.model.out.FaceSwapVideoTemplateRespDataModel
@@ -58,7 +57,7 @@ import com.stylehub.aivideo.ui.common.CommonEmptyView
 import com.stylehub.aivideo.ui.home.HomeActivity
 import com.stylehub.aivideo.ui.home.SwapTabsEnum
 import com.stylehub.aivideo.utils.AppRouterManager
-import com.stylehub.aivideo.utils.LoginManager
+import kotlinx.coroutines.launch
 import kotlin.math.min
 
 @SuppressLint("StateFlowValueCalledInComposition")
