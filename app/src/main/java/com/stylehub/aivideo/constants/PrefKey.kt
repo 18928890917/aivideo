@@ -26,5 +26,10 @@ object PrefKey {
      */
     const val NEED_SHOW_FIRST_UPLOAD_HINT = "need_show_first_upload_hint_dialog"
 
+    /**
+     * 首次成功上报归因信息
+     */
+    const val IS_UPLOAD_GOOGLE_REFERER = "is_upload_google_referer"
+
     // 可在此添加更多 key
 } 

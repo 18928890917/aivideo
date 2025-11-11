@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import coil.compose.AsyncImage
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
@@ -28,12 +29,23 @@ import com.stylehub.aivideo.R
 import com.stylehub.aivideo.base.BaseActivity
 import com.stylehub.aivideo.base.BaseViewModel
 import com.stylehub.aivideo.constants.PrefKey
+import com.stylehub.aivideo.network.ApiService
+import com.stylehub.aivideo.network.Network
+import com.stylehub.aivideo.network.model.`in`.CommonReqModel
+import com.stylehub.aivideo.network.model.`in`.ReportReferrerReqDataModel
+import com.stylehub.aivideo.network.model.out.CommonRespModel
+import com.stylehub.aivideo.utils.AppUtil
 import com.stylehub.aivideo.utils.LoginManager
 import com.stylehub.aivideo.utils.ScreenUtil
 import com.stylehub.aivideo.utils.SharedPreferenceUtil
 import com.stylehub.aivideo.utils.ToastUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  *
@@ -94,6 +106,18 @@ class WelcomeActivity: BaseActivity<WelcomeActivityViewModel, WelcomeActivityUiD
                             val installTimestamp = response.installBeginTimestampSeconds
                             // 你可以在这里处理 referrer 信息，比如上报或存储
                             SharedPreferenceUtil.put(PrefKey.REFERRER_URL, referrerUrl)
+
+                            val isUpload: Boolean =
+                                SharedPreferenceUtil.get(PrefKey.IS_UPLOAD_GOOGLE_REFERER, false) == true
+                            if (!isUpload) {
+                                //上报google归因信息
+                                mViewModel.viewModelScope.launch {
+                                    val isUploadReferer = mViewModel.uploadReferer(referrerUrl)
+                                    //记录结果
+                                    SharedPreferenceUtil.put(PrefKey.IS_UPLOAD_GOOGLE_REFERER, isUploadReferer)
+                                }
+                            }
+
                         } catch (e: Exception) {
                             e.printStackTrace()
                         } finally {
@@ -154,6 +178,41 @@ class WelcomeActivity: BaseActivity<WelcomeActivityViewModel, WelcomeActivityUiD
 }
 
 class WelcomeActivityViewModel: BaseViewModel<WelcomeActivityUiData>(WelcomeActivityUiData()) {
+
+    suspend fun uploadReferer(googleReferer: String): Boolean {
+
+        return suspendCoroutine {
+
+            val api = Network().createApi(ApiService::class.java)
+
+            val request = ReportReferrerReqDataModel(
+                googleReferer,
+                AppUtil.getDeviceId()
+            )
+
+            api.reportReferrer(CommonReqModel(request)).enqueue(object :
+                Callback<CommonRespModel<Unit>> {
+                override fun onResponse(
+                    call: Call<CommonRespModel<Unit>>,
+                    response: Response<CommonRespModel<Unit>>
+                ) {
+                    if (response.isSuccessful && response.body()?.code == 0) {
+                        it.resume(true)
+                        return
+                    }
+                    it.resume(false)
+                }
+
+                override fun onFailure(
+                    call: Call<CommonRespModel<Unit>>,
+                    t: Throwable
+                ) {
+                    it.resume(false)
+                }
+
+            })
+        }
+    }
 
 }
 

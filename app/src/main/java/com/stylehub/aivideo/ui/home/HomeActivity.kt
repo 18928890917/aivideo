@@ -44,10 +44,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.facebook.appevents.AppEventsLogger
-import com.google.gson.Gson
 import com.stylehub.aivideo.R
 import com.stylehub.aivideo.base.BaseActivity
-import com.stylehub.aivideo.network.model.out.UserConfigDataModel
 import com.stylehub.aivideo.ui.home.dance.ClothesSwapTab
 import com.stylehub.aivideo.ui.home.hot.HotTab
 import com.stylehub.aivideo.ui.home.swap.SwapTab
