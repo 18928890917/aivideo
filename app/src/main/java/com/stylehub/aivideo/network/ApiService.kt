@@ -295,12 +295,9 @@ interface ApiService {
     @POST("/v1/log/appevent")
     fun reportAppEvent(
         @Body body: CommonReqModel<AppEventReqDataModel>,
-        @Query("userId") userId: String,
-        @Query("ch") ch: String,
         @Query("deviceId") deviceId: String,
-        @Query("app") app: String = AppConst.app,
-        @Query("event") event: String = "appLauncher",
-        @Query("pkg") pkg: String = AppConst.packageName,
+        @Query("event") event: String = AppConst.appName,
+        @Query("domain") ch: String = AppConst.packageName,
     ): Call<CommonRespModel<Unit>>
 
     /**
@@ -391,6 +388,7 @@ interface ApiService {
     @POST("/v1/user/referrer")
     fun reportReferrer(
         @Body body: CommonReqModel<ReportReferrerReqDataModel>,
+        @Query("type") type: String,
         @Query("pkg") pkg: String = AppConst.packageName,
         @Query("app") app: String = AppConst.app,
     ): Call<CommonRespModel<Unit>>

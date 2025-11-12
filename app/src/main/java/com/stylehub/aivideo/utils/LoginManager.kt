@@ -52,7 +52,7 @@ object LoginManager {
         return suspendCoroutine {
 
             val deviceId = AppUtil.getDeviceId()
-            val referer = SharedPreferenceUtil.get(PrefKey.REFERRER_URL, "")!!
+            val referer = SharedPreferenceUtil.get(PrefKey.GOOGLE_REFERRER_URL, "")!!
             val sign = EncryptUtil.md5(deviceId, upperCase = true)
 
             val reqData = FastLoginReqDataModel(
@@ -157,7 +157,7 @@ object LoginManager {
                 if (googleSignInAccount != null) {
 
                     val req = GoogleLoginReqDataModel().apply {
-                        referer = SharedPreferenceUtil.get(PrefKey.REFERRER_URL, "")!!
+                        referer = SharedPreferenceUtil.get(PrefKey.GOOGLE_REFERRER_URL, "")!!
                         deviceId = AppUtil.getDeviceId()
                         userName = googleSignInAccount.displayName
                         avatar = googleSignInAccount.profilePictureUri?.toString()

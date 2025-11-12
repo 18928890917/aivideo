@@ -1,6 +1,7 @@
 package com.stylehub.aivideo.ui.home
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,6 +52,7 @@ import com.stylehub.aivideo.ui.home.hot.HotTab
 import com.stylehub.aivideo.ui.home.swap.SwapTab
 import com.stylehub.aivideo.ui.theme.AiSwapTheme
 import com.stylehub.aivideo.utils.AppRouterManager
+import com.stylehub.aivideo.utils.ReferrerUtil
 
 class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
     override val mViewModel: HomeActivityViewModel by viewModels()
@@ -171,6 +173,13 @@ class HomeActivity : BaseActivity<HomeActivityViewModel, HomeActivityData>() {
     override fun onBackPressed() {
         super.onBackPressed()
         moveTaskToBack(true)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //提交归因
+        ReferrerUtil.submitGoogleReferrer(this)
+        ReferrerUtil.submitFacebookReferrer(this)
     }
 
     override fun onResume() {

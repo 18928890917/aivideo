@@ -9,7 +9,18 @@ package com.stylehub.aivideo.network.consts
 
 object AppConst {
 
-    val packageName = "com.stylehub.aivideo"
+    const val appName = "StyleHub"
 
-    val app = "android"
+    const val packageName = "com.stylehub.aivideo"
+
+    const val app = "android"
+
+    const val referrerTypeGoogle = "gg"
+
+    enum class ReferrerType(val type: String) {
+
+        GOOGLE("gg"),
+
+        FACEBOOK("fb"),
+    }
 }

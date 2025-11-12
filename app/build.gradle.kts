@@ -12,7 +12,7 @@ android {
         applicationId = "com.stylehub.aivideo"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
+        versionCode = 8
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -96,11 +96,17 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
-    implementation(libs.facebook.core)
-    implementation("androidx.media3:media3-ui:1.4.1")
-    implementation("androidx.media3:media3-exoplayer:1.4.1")
+
+    //facebook sdk
+    // 推荐：使用完整 SDK（兼容性更好）
+    implementation(libs.facebook.android.sdk)
+//    //仅用 core（如果你确定不需要登录/分享）
+//    implementation(libs.facebook.core)
+
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.exoplayer)
     // 如果需要网络播放（如 HTTPS 视频）
-    implementation("androidx.media3:media3-datasource-okhttp:1.4.1") // 可选
+    implementation(libs.androidx.media3.datasource.okhttp) // 可选
 //    implementation("com.google.android.gms:play-services-wallet:19.2.1")
 
 }
