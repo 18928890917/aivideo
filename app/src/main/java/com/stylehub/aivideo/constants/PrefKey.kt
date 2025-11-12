@@ -41,5 +41,10 @@ object PrefKey {
      */
     const val IS_UPLOAD_FACEBOOK_REFERER = "is_upload_facebook_referer"
 
+    /**
+     * 首次成功上报归因信息
+     */
+    const val HOT_CONFIG_MD5 = "hot_config_md5"
+
     // 可在此添加更多 key
 } 

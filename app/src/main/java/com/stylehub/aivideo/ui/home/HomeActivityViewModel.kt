@@ -11,6 +11,7 @@ import com.google.android.gms.common.util.CollectionUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.stylehub.aivideo.base.BaseViewModel
+import com.stylehub.aivideo.constants.PrefKey
 import com.stylehub.aivideo.network.ApiService
 import com.stylehub.aivideo.network.Network
 import com.stylehub.aivideo.network.model.out.ClothesTemplateRespDataModel
@@ -21,7 +22,9 @@ import com.stylehub.aivideo.network.model.out.GetImg2VideoPoseTemplateRespDataMo
 import com.stylehub.aivideo.network.model.out.Template
 import com.stylehub.aivideo.network.model.out.UserCommonInfoRespDataModel
 import com.stylehub.aivideo.network.model.out.UserConfigDataModel
+import com.stylehub.aivideo.utils.EncryptUtil
 import com.stylehub.aivideo.utils.LoginManager
+import com.stylehub.aivideo.utils.SharedPreferenceUtil
 import com.stylehub.aivideo.utils.ToastUtil
 import retrofit2.Call
 import retrofit2.Callback
@@ -413,9 +416,6 @@ class HomeActivityViewModel : BaseViewModel<HomeActivityData>(HomeActivityData()
         }
         if (isRefresh) {
             hotTabData.configList.clear()
-        } else {
-            if (hotTabData.configList.isNotEmpty())
-                return
         }
         hotTabData.isLoading = true
 
@@ -433,9 +433,18 @@ class HomeActivityViewModel : BaseViewModel<HomeActivityData>(HomeActivityData()
                 val data = resp?.data?.value
                 if (response.isSuccessful && resp != null && resp.code == 0 && data != null) {
 
-                    if (!TextUtils.isEmpty(data.extConfig)) {
+                    if (data.extConfig.isNullOrEmpty()) {
                         val type = object : TypeToken<List<UserConfigDataModel>>() {}.type
-                        hotTabData.configList = Gson().fromJson(data.extConfig, type)
+
+                        val savedMd5 = SharedPreferenceUtil.get(PrefKey.HOT_CONFIG_MD5, "")
+
+                        //保存下当前config的md5值
+                        val configMd5 = EncryptUtil.md5(data.extConfig!!)
+                        SharedPreferenceUtil.put(PrefKey.HOT_CONFIG_MD5, configMd5)
+
+                        if (hotTabData.configList.isEmpty() || !savedMd5.equals(configMd5)) {
+                            hotTabData.configList = Gson().fromJson(data.extConfig, type)
+                        }
                     }
                 }
             }
