@@ -24,18 +24,38 @@ object GalleryUtil {
         }
     }
 
+//    fun buildGalleryIntent(mediaType: MediaType): Intent {
+//        return Intent(Intent.ACTION_PICK).apply {
+//            type = when (mediaType) {
+//                MediaType.IMAGE -> "image/*"
+//                MediaType.VIDEO -> "video/*"
+//                MediaType.IMAGE_AND_VIDEO -> "*/*"
+//            }
+//            putExtra(Intent.EXTRA_MIME_TYPES, when (mediaType) {
+//                MediaType.IMAGE -> arrayOf("image/*")
+//                MediaType.VIDEO -> arrayOf("video/*")
+//                MediaType.IMAGE_AND_VIDEO -> arrayOf("image/*", "video/*")
+//            })
+//        }
+//    }
+
     fun buildGalleryIntent(mediaType: MediaType): Intent {
-        return Intent(Intent.ACTION_PICK).apply {
-            type = when (mediaType) {
-                MediaType.IMAGE -> "image/*"
-                MediaType.VIDEO -> "video/*"
-                MediaType.IMAGE_AND_VIDEO -> "*/*"
+        return Intent(Intent.ACTION_GET_CONTENT).apply {
+            when (mediaType) {
+                MediaType.IMAGE -> {
+                    type = "image/*"
+                }
+                MediaType.VIDEO -> {
+                    type = "video/*"
+                }
+                MediaType.IMAGE_AND_VIDEO -> {
+                    type = "image/*" // 主类型必须是具体类型
+                    putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+                }
             }
-            putExtra(Intent.EXTRA_MIME_TYPES, when (mediaType) {
-                MediaType.IMAGE -> arrayOf("image/*")
-                MediaType.VIDEO -> arrayOf("video/*")
-                MediaType.IMAGE_AND_VIDEO -> arrayOf("image/*", "video/*")
-            })
+            addCategory(Intent.CATEGORY_OPENABLE)
+            // 可选：限制只显示本地文件（避免云盘干扰）
+            putExtra("android.intent.extra.LOCAL_ONLY", true)
         }
     }
 }

@@ -66,12 +66,12 @@ data class MyTaskRecord(
      *
      */
     @SerializedName("wxysxyztefgaxyztijke")
-    val state: String?,
+    var state: String?,
     /**
      * 图片或视频列表
      */
     @SerializedName("mnoiqrsmklmgPQRLmnoiwxysxyzt")
-    val imgList: List<MyTaskImage>?,
+    var imgList: List<MyTaskImage>?,
     /**
      * 任务类型
      * 2=图片换脸，3=换衣，5=视频换脸，7=黏土风格，8=跳舞视频，11=高级换脸
@@ -94,21 +94,21 @@ data class MyTaskImage(
      * 图片或视频地址
      */
     @SerializedName("mnoiqrsmklmgYZAUvwxrpqrl")
-    val imgUrl: String?,
+    var imgUrl: String? = null,
     /**
      * 图片类型，1=图片，2=视频
      */
     @SerializedName("mnoiqrsmklmgXYZTcdeytuvpijke")
-    val imgType: Int?,
+    var imgType: Int? = 1,
     /**
      * 是否加了模糊
      */
     @SerializedName("fghbpqrlyzauvwxr")
-    val blur: Boolean?,
+    var blur: Boolean? = false,
     /**
      * 分辨率
      * e.g:"383*511"
      */
     @SerializedName("vwxrijkewxysstuopqrlyzauxyztmnoistuorstn")
-    val resolution: String?
+    var resolution: String? = null
 ) 

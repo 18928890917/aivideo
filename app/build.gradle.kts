@@ -12,7 +12,7 @@ android {
         applicationId = "com.stylehub.aivideo"
         minSdk = 24
         targetSdk = 35
-        versionCode = 9
+        versionCode = 13
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -39,10 +39,15 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile = file("stylehub.jks")
-            storePassword = "UycvxFJPgHtsVeaPdogLh4"
-            keyAlias = "stylehub"
-            keyPassword = "UycvxFJPgHtsVeaPdogLh4"
+            val storeFileProp = project.findProperty("KEY_STORE_FILE")?.toString()
+            val storePassword = project.findProperty("KEY_STORE_PWD")?.toString()
+            val keyAlias = project.findProperty("KEY_ALIAS")?.toString()
+            val keyPassword = project.findProperty("KEY_PWD")?.toString()
+
+            storeFile = if (storeFileProp != null) file(storeFileProp) else null
+            this.storePassword = storePassword
+            this.keyAlias = keyAlias
+            this.keyPassword = keyPassword
         }
     }
     buildTypes {
@@ -56,6 +61,18 @@ android {
         }
         debug {
             signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    // >>>>>>>>>>>>>>>>>> 自定义输出文件名 <<<<<<<<<<<<<<<<<<
+    applicationVariants.all {
+        outputs.mapNotNull { output ->
+            output as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
+        }.forEach { output ->
+            val versionName = defaultConfig.versionName ?: "1.0.0"
+            val versionCode = defaultConfig.versionCode ?: 1
+            val formattedCode = "%06d".format(versionCode)
+            output.outputFileName = "stylehub-v${versionName}-build${formattedCode}.apk"
         }
     }
 }

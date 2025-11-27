@@ -1,6 +1,10 @@
 package com.stylehub.aivideo.ui.mine
 
 import androidx.activity.viewModels
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,15 +13,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -27,16 +28,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,24 +55,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import coil.compose.AsyncImage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.stylehub.aivideo.R
 import com.stylehub.aivideo.base.BaseActivity
-import com.stylehub.aivideo.network.ApiService
-import com.stylehub.aivideo.network.Network
-import com.stylehub.aivideo.network.model.out.MyTaskRecord
 import com.stylehub.aivideo.ui.common.CommonEmptyView
 import com.stylehub.aivideo.ui.common.CommonLoading
 import com.stylehub.aivideo.ui.dialog.PreviewDialog
 import com.stylehub.aivideo.utils.AppRouterManager
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 
 class MineActivity : BaseActivity<MineActivityViewModel, MineActivityUiData>() {
     override val mViewModel: MineActivityViewModel by viewModels()
@@ -81,26 +81,32 @@ class MineActivity : BaseActivity<MineActivityViewModel, MineActivityUiData>() {
             onPurchase = {
                 AppRouterManager.enterPurchaseActivity()
             },
-            onSwitchTab = { mViewModel.switchTab(it) },
-            onPreview = {
-                if (!"finished".equals(it.state, true)) {
-                    mViewModel.showMessageHintDialog("Current task state is ${it.state}", "Message")
+            onSwitchTab = {
+                mViewModel.switchTab(it)
+                if (it == 0) {
+                    mViewModel.loadLatestSwappedTask()
                 } else {
-                    mViewModel.showPreviewDialog(it)
+                    mViewModel.loadLatestDanceTask()
                 }
             },
+            onPreview = {
+                mViewModel.showPreviewDialog(it)
+            },
             onDownload = {
-                if (!"finished".equals(it.state, true)) {
-                    mViewModel.showMessageHintDialog("Current task state is ${it.state}", "Message")
-                } else {
-                    mViewModel.download(it)
-                }
+                mViewModel.download(it)
             },
             onLoadMore = {
                 if (it == 0) {
                     mViewModel.loadSwappedTask()
                 } else {
                     mViewModel.loadOtherTask()
+                }
+            },
+            onLoadLatest = {
+                if (it == 0) {
+                    mViewModel.loadLatestSwappedTask()
+                } else {
+                    mViewModel.loadLatestDanceTask()
                 }
             }
         )
@@ -116,6 +122,28 @@ class MineActivity : BaseActivity<MineActivityViewModel, MineActivityUiData>() {
     }
 }
 
+@OptIn(FlowPreview::class)
+@Composable
+fun LoadMoreWhenApproachingEnd(
+    listState: LazyListState,
+    threshold: Int = 5,
+    debounceMs: Long = 200L,
+    onLoadMore: () -> Unit,
+) {
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            val total = listState.layoutInfo.totalItemsCount
+            lastVisible to total
+        }
+            .distinctUntilChanged()
+            .filter { (last, total) -> total > 0 && last >= total - threshold }
+            .debounce(debounceMs)
+            .collect { onLoadMore() }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MineScreen(
     uiStateData: MineActivityUiData,
@@ -123,26 +151,63 @@ fun MineScreen(
     onSettings: () -> Unit,
     onPurchase: () -> Unit,
     onSwitchTab: (index: Int) -> Unit,
-    onPreview: (MyTaskRecord) -> Unit,
-    onDownload: (MyTaskRecord) -> Unit,
-    onLoadMore: (tabIndex: Int) -> Unit
+    onPreview: (TaskListData) -> Unit,
+    onDownload: (TaskListData) -> Unit,
+    onLoadMore: (tabIndex: Int) -> Unit,
+    onLoadLatest: (tabIndex: Int) -> Unit
 ) {
     val swappedListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
     val danceListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 
-    LaunchedEffect(swappedListState) {
-        derivedStateOf {
-            if (!swappedListState.canScrollForward) {
-                onLoadMore(0)
+    val swapPullToRefreshState = remember {
+        object : PullToRefreshState {
+
+            private val anim = Animatable(0f, Float. VectorConverter)
+
+            override val distanceFraction: Float
+                get() = anim. value
+
+            override suspend fun animateToHidden() {
+                anim. animateTo(0f)
             }
-            if (!danceListState.canScrollForward) {
-                onLoadMore(1)
+
+            override suspend fun animateToThreshold() {
+//                anim. animateTo(1f, spring(dampingRatio = Spring. DampingRatioHighBouncy))
+                anim. animateTo(0f)
+            }
+
+            override suspend fun snapTo(targetValue: Float) {
+                anim. snapTo(targetValue)
+            }
+        }
+    }
+    val dancePullToRefreshState = remember {
+        object : PullToRefreshState {
+
+            private val anim = Animatable(0f, Float. VectorConverter)
+
+            override val distanceFraction: Float
+                get() = anim. value
+
+            override suspend fun animateToHidden() {
+                anim.animateTo(0f)
+            }
+
+            override suspend fun animateToThreshold() {
+//                anim. animateTo(1f, spring(dampingRatio = Spring. DampingRatioHighBouncy))
+                anim.animateTo(0f)
+            }
+
+            override suspend fun snapTo(targetValue: Float) {
+                anim.snapTo(targetValue)
             }
         }
     }
 
-    Scaffold {
-        pd->
+    LoadMoreWhenApproachingEnd(swappedListState) { onLoadMore(0) }
+    LoadMoreWhenApproachingEnd(danceListState) { onLoadMore(1) }
+
+    Scaffold { pd ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -162,7 +227,11 @@ fun MineScreen(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = onSettings) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
+                    Icon(
+                        Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.White
+                    )
                 }
             }
 
@@ -257,57 +326,103 @@ fun MineScreen(
 
                 if (uiStateData.currentSelectIndex == 0) {
 
-                    LazyColumn(state = swappedListState) {
-                        items(uiStateData.swappedTaskList.size) { idx ->
-                            TaskListItem(
-                                task = uiStateData.swappedTaskList[idx],
-                                onDownload = onDownload,
-                                onPreview = onPreview
-                            )
-                            // 在每个项目后添加一个 Divider，除了最后一个项目
-                            if (idx < uiStateData.swappedTaskList.size - 1) {
-                                HorizontalDivider(
-                                    thickness = 0.5.dp, // 分割线厚度
-                                    color = Color(0xFF5A5B5B) // 分割线颜色
+                    PullToRefreshBox(
+                        isRefreshing = uiStateData.swappedTaskLoadLatestLoading,
+                        onRefresh = { onLoadLatest(0) },
+                        state = swapPullToRefreshState,
+                        indicator = {
+                            if (!uiStateData.swappedTaskLoadLatestLoading) {
+                                Indicator(
+                                    modifier = Modifier.align(Alignment.TopCenter),
+                                    isRefreshing = false,
+                                    state = swapPullToRefreshState
                                 )
                             }
                         }
-                        if (uiStateData.swappedTaskLoading) {
-                            item {
-                                CommonLoading()
-                            }
-                        } else {
-                            if (uiStateData.swappedTaskList.isEmpty()) {
+                    ) {
+                        LazyColumn(state = swappedListState) {
+
+                            if (uiStateData.swappedTaskLoadLatestLoading) {
                                 item {
-                                    CommonEmptyView()
+                                    CommonLoading()
+                                }
+                            }
+
+                            items(uiStateData.swappedTaskList.size) { idx ->
+                                TaskListItem(
+                                    task = uiStateData.swappedTaskList[idx],
+                                    onDownload = onDownload,
+                                    onPreview = onPreview
+                                )
+                                // 在每个项目后添加一个 Divider，除了最后一个项目
+                                if (idx < uiStateData.swappedTaskList.size - 1) {
+                                    HorizontalDivider(
+                                        thickness = 0.5.dp, // 分割线厚度
+                                        color = Color(0xFF5A5B5B) // 分割线颜色
+                                    )
+                                }
+                            }
+                            if (uiStateData.swappedTaskLoading) {
+                                item {
+                                    CommonLoading()
+                                }
+                            } else {
+                                if (!uiStateData.swappedTaskLoadLatestLoading && uiStateData.swappedTaskList.isEmpty()) {
+                                    item {
+                                        CommonEmptyView()
+                                    }
                                 }
                             }
                         }
                     }
+
                 } else {
-                    LazyColumn(state = danceListState) {
-                        items(uiStateData.danceTaskList.size) { idx ->
-                            TaskListItem(
-                                task = uiStateData.danceTaskList[idx],
-                                onDownload = onDownload,
-                                onPreview = onPreview
-                            )
-                            // 在每个项目后添加一个 Divider，除了最后一个项目
-                            if (idx < uiStateData.danceTaskList.size - 1) {
-                                HorizontalDivider(
-                                    thickness = 0.5.dp, // 分割线厚度
-                                    color = Color(0xFF5A5B5B) // 分割线颜色
+
+                    PullToRefreshBox(
+                        isRefreshing = uiStateData.danceTaskLoadLatestLoading,
+                        onRefresh = { onLoadLatest(1) },
+                        state = dancePullToRefreshState,
+                        indicator = {
+                            if (!uiStateData.danceTaskLoadLatestLoading) {
+                                Indicator(
+                                    modifier = Modifier.align(Alignment.TopCenter),
+                                    isRefreshing = false,
+                                    state = dancePullToRefreshState
                                 )
                             }
                         }
-                        if (uiStateData.danceTaskLoading) {
-                            item {
-                                CommonLoading()
-                            }
-                        } else {
-                            if (uiStateData.danceTaskList.isEmpty()) {
+                    ) {
+                        LazyColumn(state = danceListState) {
+
+                            if (uiStateData.danceTaskLoadLatestLoading) {
                                 item {
-                                    CommonEmptyView()
+                                    CommonLoading()
+                                }
+                            }
+
+                            items(uiStateData.danceTaskList.size) { idx ->
+                                TaskListItem(
+                                    task = uiStateData.danceTaskList[idx],
+                                    onDownload = onDownload,
+                                    onPreview = onPreview
+                                )
+                                // 在每个项目后添加一个 Divider，除了最后一个项目
+                                if (idx < uiStateData.danceTaskList.size - 1) {
+                                    HorizontalDivider(
+                                        thickness = 0.5.dp, // 分割线厚度
+                                        color = Color(0xFF5A5B5B) // 分割线颜色
+                                    )
+                                }
+                            }
+                            if (uiStateData.danceTaskLoading) {
+                                item {
+                                    CommonLoading()
+                                }
+                            } else {
+                                if (!uiStateData.danceTaskLoadLatestLoading && uiStateData.danceTaskList.isEmpty()) {
+                                    item {
+                                        CommonEmptyView()
+                                    }
                                 }
                             }
                         }
@@ -398,31 +513,11 @@ fun SegmentedTab(
     }
 }
 
-class MineTaskViewModel : ViewModel() {
-    private val _tasks = MutableStateFlow<List<MyTaskRecord>>(emptyList())
-    val tasks: StateFlow<List<MyTaskRecord>> = _tasks.asStateFlow()
-
-    fun fetchTasks(page: Int = 1, size: Int = 20) {
-        viewModelScope.launch {
-            try {
-                val api = Network().createApi(ApiService::class.java)
-                val result = withContext(Dispatchers.IO) {
-                    val resp = api.myTasks(page = page, size = size)
-                    resp.execute().body()?.data?.value?.records ?: emptyList()
-                }
-                _tasks.value = result
-            } catch (e: Exception) {
-                _tasks.value = emptyList()
-            }
-        }
-    }
-}
-
 @Composable
 fun TaskListItem(
-    task: MyTaskRecord,
-    onDownload: (MyTaskRecord) -> Unit,
-    onPreview: (MyTaskRecord) -> Unit
+    task: TaskListData,
+    onDownload: (TaskListData) -> Unit,
+    onPreview: (TaskListData) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -436,30 +531,38 @@ fun TaskListItem(
             fontSize = 15.sp,
             modifier = Modifier.weight(1f)
         )
-        TextButton(onClick = { onDownload(task) }) {
-            Text(
-                "Download",
-                fontSize = 15.sp,
-                style = androidx.compose.ui.text.TextStyle(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            Color(0xFF9D9FE7),
-                            Color(0xFF627564)
+
+        if (task.taskState == TaskState.FINISHED) {
+            TextButton(onClick = { onDownload(task) }) {
+                Text(
+                    "Download",
+                    fontSize = 15.sp,
+                    style = androidx.compose.ui.text.TextStyle(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                Color(0xFF9D9FE7),
+                                Color(0xFF627564)
+                            )
                         )
                     )
                 )
+            }
+            Spacer(modifier = Modifier.width(3.5.dp))
+            Spacer(
+                modifier = Modifier
+                    .width(1.dp)
+                    .height(17.dp)
+                    .background(Color(0xFF2B2B2B))
             )
+            Spacer(modifier = Modifier.width(3.5.dp))
+            TextButton(onClick = { onPreview(task) }) {
+                Text("Preview", fontSize = 15.sp, color = Color(0xFFD6DAFA))
+            }
+        } else if (task.taskState == TaskState.PENDING) {
+            Text("Pending - ${task.progress ?: 0}%", fontSize = 15.sp, color = Color(0xFFD6DAFA))
+        } else {
+            Text("Fail", fontSize = 15.sp, color = Color(0xFFD6DAFA))
         }
-        Spacer(modifier = Modifier.width(3.5.dp))
-        Spacer(
-            modifier = Modifier
-                .width(1.dp)
-                .height(17.dp)
-                .background(Color(0xFF2B2B2B))
-        )
-        Spacer(modifier = Modifier.width(3.5.dp))
-        TextButton(onClick = { onPreview(task) }) {
-            Text("Preview", fontSize = 15.sp, color = Color(0xFFD6DAFA))
-        }
+
     }
 }

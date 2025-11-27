@@ -433,7 +433,7 @@ class HomeActivityViewModel : BaseViewModel<HomeActivityData>(HomeActivityData()
                 val data = resp?.data?.value
                 if (response.isSuccessful && resp != null && resp.code == 0 && data != null) {
 
-                    if (data.extConfig.isNullOrEmpty()) {
+                    if (!data.extConfig.isNullOrEmpty()) {
                         val type = object : TypeToken<List<UserConfigDataModel>>() {}.type
 
                         val savedMd5 = SharedPreferenceUtil.get(PrefKey.HOT_CONFIG_MD5, "")
